@@ -2,6 +2,9 @@ from typing import Optional
 
 import requests
 
+from core.Banknote import Banknote
+from core.BanknoteChain import BanknoteChain
+from core.OneBlock import OneBlock
 from core.crypto import hash_items, sign_with_private_key, init_pair
 from core.utils import current_epoch_time, random_numerical_string
 
@@ -86,12 +89,13 @@ def issue_and_receive_banknotes(amount_to_issue: int, wid: str, spk: str) -> Opt
         for rejected_banknote_details in rejected_banknotes:
             print(rejected_banknote_details)
 
-    banknotes_with_chain = zip(issued_banknotes, receive_json["received_banknotes"])
+    blockchains = [{**it[0], **it[1]} for it in zip(banknote_initial_chains, receive_json["received_banknotes"])]
+    banknotes_with_chain = zip(issued_banknotes, blockchains)
 
-    return [{
-        'banknote': it[0],
-        'blockchain': [it[1]]
-    } for it in banknotes_with_chain]
+    return [BanknoteChain(
+        banknote=Banknote.from_dict(it[0]),
+        blockchain=[OneBlock.from_dict(it[1])]
+    ) for it in banknotes_with_chain]
 
 
 # Example
@@ -102,6 +106,6 @@ if __name__ == "__main__":
     wid_ = register_wallet(sok_)
     print("wid", wid_)
 
-    banknotes = issue_and_receive_banknotes(300, wid_, spk_)
+    banknotes = issue_and_receive_banknotes(10, wid_, spk_)
     for banknote in banknotes:
         print(banknote)

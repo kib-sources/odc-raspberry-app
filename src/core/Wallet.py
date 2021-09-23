@@ -1,10 +1,20 @@
-from typing import Optional
+from typing import Optional, List
 
+from core.BanknoteChain import BanknoteChain
 from core.crypto import init_pair
 from server_api import register_wallet, issue_and_receive_banknotes
 
 
 class Wallet:
+    sok: str
+    spk: str
+    wid: str
+    banknotes: List[BanknoteChain]
+
+    # TODO
+    sok_signature: str
+    bok: str
+
     def __init__(self):
         self.sok, self.spk = init_pair()
         self.wid = register_wallet(self.sok)
@@ -15,7 +25,7 @@ class Wallet:
         self.banknotes += banknotes
 
     def deposit_size(self):
-        return sum(it["banknote"]["amount"] for it in self.banknotes)
+        return sum(it.banknote.amount for it in self.banknotes)
 
 
 # Example
