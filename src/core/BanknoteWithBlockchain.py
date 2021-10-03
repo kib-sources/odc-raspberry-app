@@ -2,12 +2,12 @@ from dataclasses import dataclass
 from typing import List
 
 from core.Banknote import Banknote
-from core.OneBlock import OneBlock
+from core.Block import Block
 
 
 @dataclass
-class BanknoteChain:
+class BanknoteWithBlockchain:
     banknote: Banknote
-    blockchain: List[OneBlock]
+    blockchain: List[Block]
 
 

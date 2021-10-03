@@ -7,7 +7,7 @@ RUSSIAN_RUBLE = 643
 
 @dataclass_json
 @dataclass
-class OneBlock:
+class Block:
     # BankNote id
     bnid: str
     magic: str
@@ -15,6 +15,6 @@ class OneBlock:
     uuid: str
     otok: str
 
-    transaction_hash: str
-    transaction_hash_signed: str
+    subscribe_transaction_hash: str
+    subscribe_transaction_signature: str
     parent_uuid: Optional[str] = None

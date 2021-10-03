@@ -1,7 +1,8 @@
-from typing import Optional, List
+from typing import Optional, List, Union
+from uuid import UUID
 
-from core.BanknoteChain import BanknoteChain
-from core.crypto import init_pair
+from core.BanknoteWithBlockchain import BanknoteWithBlockchain
+import core.crypto as crypto
 from server_api import register_wallet, issue_and_receive_banknotes
 
 
@@ -9,14 +10,14 @@ class Wallet:
     sok: str
     spk: str
     wid: str
-    banknotes: List[BanknoteChain]
+    banknotes: List[BanknoteWithBlockchain]
 
     # TODO
     sok_signature: str
     bok: str
 
     def __init__(self):
-        self.sok, self.spk = init_pair()
+        self.sok, self.spk = crypto.init_pair()
         self.wid = register_wallet(self.sok)
         self.banknotes = list()
 
@@ -26,6 +27,25 @@ class Wallet:
 
     def deposit_size(self):
         return sum(it.banknote.amount for it in self.banknotes)
+
+    def subscribe(self, uuid: Union[UUID, str], parent_uuid: Union[UUID, str], bnid):
+        parent_uuid = str(parent_uuid)
+        uuid = str(uuid)
+        if parent_uuid not in self._bag:
+            raise Exception(f"Уже передан блок с uuid={parent_uuid} или данного блока никогда не было в кошельке")
+
+        otpk = self._bag[parent_uuid]
+
+        magic = crypto.random_magic()
+
+        _subscribe_transaction_hash = crypto.subscribe_transaction_hash(uuid, magic, bnid)
+        _subscribe_transaction_signature = crypto.signature(_subscribe_transaction_hash, otpk)
+
+        # Удаляем ключ, чтобы более ни разу нельзя было подписывать
+        #   в нормальном решении необходимо хранение на доверенном носителе, например на SIM
+        del self._bag[parent_uuid]
+
+        return magic, _subscribe_transaction_hash, _subscribe_transaction_signature
 
 
 # Example

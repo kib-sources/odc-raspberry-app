@@ -3,8 +3,8 @@ from typing import Optional
 import requests
 
 from core.Banknote import Banknote
-from core.BanknoteChain import BanknoteChain
-from core.OneBlock import OneBlock
+from core.BanknoteWithBlockchain import BanknoteWithBlockchain
+from core.Block import Block
 from core.crypto import hash_items, sign_with_private_key, init_pair
 from core.utils import current_epoch_time, random_numerical_string
 
@@ -92,9 +92,9 @@ def issue_and_receive_banknotes(amount_to_issue: int, wid: str, spk: str) -> Opt
     blockchains = [{**it[0], **it[1]} for it in zip(banknote_initial_chains, receive_json["received_banknotes"])]
     banknotes_with_chain = zip(issued_banknotes, blockchains)
 
-    return [BanknoteChain(
+    return [BanknoteWithBlockchain(
         banknote=Banknote.from_dict(it[0]),
-        blockchain=[OneBlock.from_dict(it[1])]
+        blockchain=[Block.from_dict(it[1])]
     ) for it in banknotes_with_chain]
 
 

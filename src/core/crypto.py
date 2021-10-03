@@ -1,4 +1,7 @@
+import random
 from hashlib import sha256
+from typing import Union
+from uuid import UUID
 
 import rsa
 
@@ -29,7 +32,7 @@ def verify_with_public_key(origin, signature, key):
     return True
 
 
-def init_pair():
+def init_pair() -> (str, str):
     """
     Инициализирует пары ключей:
     * закрытый ключ шифрования
@@ -85,3 +88,15 @@ def verify_signature(hex_hash: str, hex_signature: str, publickey: str) -> bool:
         return False
     else:
         return True
+
+
+def subscribe_transaction_hash(uuid: Union[UUID, str], magic: str, bnid):
+    return hash_(str(uuid), magic, bnid)
+
+
+def random_magic():
+    magic = list()
+    for i in range(16):
+        magic += str(random.randint(0, 9))
+    magic = ''.join(magic)
+    return magic
