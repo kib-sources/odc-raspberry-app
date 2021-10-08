@@ -18,8 +18,9 @@ class Wallet:
 
     def __init__(self):
         self.sok, self.spk = crypto.init_pair()
-        self.wid = register_wallet(self.sok)
+        self.wid, self.sok_signature = register_wallet(self.sok)
         self.banknotes = list()
+        self._bag = dict()
 
     def refill(self, amount: int):
         banknotes: Optional[list] = issue_and_receive_banknotes(amount, self.wid, self.spk)

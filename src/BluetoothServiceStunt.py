@@ -2,6 +2,8 @@ import json
 import socket
 from typing import Optional
 
+from core.BanknoteWithBlockchain import BanknoteWithBlockchain
+
 
 class BluetoothServiceStunt:
     _server_sock: socket.socket
@@ -12,7 +14,7 @@ class BluetoothServiceStunt:
         self.sid = "133f71c6-b7b6-437e-8fd1-d2f59cc76066"
 
         print("creating socket...")
-        self._server_sock = socket.socket()
+        self._server_sock = socket.socket(socket.SO_REUSEADDR)
         self._server_sock.bind(("", 14900))
         self._server_sock.listen(1)
         self._client_sock = None
@@ -31,8 +33,15 @@ class BluetoothServiceStunt:
             self._client_sock.send(msg.encode("utf-8"))
             return
 
-        if data:
+        if data and data is dict:
             js = json.dumps(data)
+            print("send: ", js)
+            self._client_sock.send(js.encode("utf-8"))
+            return
+
+        if data and data is BanknoteWithBlockchain:
+            js = BanknoteWithBlockchain.to_json(data)
+            print("send: ", js)
             self._client_sock.send(js.encode("utf-8"))
             return
 

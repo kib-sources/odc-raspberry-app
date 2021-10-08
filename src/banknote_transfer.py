@@ -1,11 +1,14 @@
 import json
-from typing import List
+from typing import List, Union
 
 from BluetoothService import BluetoothService
+from BluetoothServiceStunt import BluetoothServiceStunt
 from core.BanknoteWithBlockchain import BanknoteWithBlockchain
 from core.Block import Block
 from core.Wallet import Wallet
 import core.crypto as crypto
+
+IBluetoothService = Union[BluetoothService, BluetoothServiceStunt]
 
 
 def transfer_banknotes(service: BluetoothService, wallet: Wallet, banknotes: List[BanknoteWithBlockchain]):
@@ -16,7 +19,7 @@ def transfer_banknotes(service: BluetoothService, wallet: Wallet, banknotes: Lis
         transfer_banknote(service=service, wallet=wallet, banknote=banknote)
 
 
-def transfer_banknote(service: BluetoothService, wallet: Wallet, banknote: BanknoteWithBlockchain):
+def transfer_banknote(service: IBluetoothService, wallet: Wallet, banknote: BanknoteWithBlockchain):
     otok, otpk = crypto.init_pair()
 
     # Шаг 1

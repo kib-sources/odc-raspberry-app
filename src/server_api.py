@@ -11,15 +11,14 @@ from core.utils import current_epoch_time, random_numerical_string
 server_url = "http://31.186.250.158"
 
 
-def register_wallet(sok: str):
+def register_wallet(sok: str) -> (str, str):
     register_response = requests.post(f"{server_url}/register-wallet", json={"sok": sok})
-    register_response_code = register_response.status_code
 
-    if register_response_code == 409:
+    if register_response.status_code == 409:
         print("Этот sok уже используется, необходимо сбросить базу данных или использовать другой.")
         return
 
-    if register_response_code == 400:
+    if register_response.status_code == 400:
         print("sok не является RSA-ключем правильного формата")
         return
 
@@ -28,7 +27,7 @@ def register_wallet(sok: str):
     # Дополнаяем доступные данные
     sok_signature = register_response_json["sok_signature"]
     wid = register_response_json["wid"]
-    return wid
+    return wid, sok_signature
 
 
 def issue_and_receive_banknotes(amount_to_issue: int, wid: str, spk: str) -> Optional[list]:
@@ -40,9 +39,7 @@ def issue_and_receive_banknotes(amount_to_issue: int, wid: str, spk: str) -> Opt
     # Для получения банкнот их необходимо выпустить
     issue_response = requests.post(f"{server_url}/issue-banknotes",
                                    json={"amount": amount_to_issue, "wid": wid})
-    issue_response_code = issue_response.status_code
-
-    if issue_response_code == 400:
+    if issue_response.status_code == 400:
         print("wid не был найден в базе данных")
         return
 
@@ -75,9 +72,7 @@ def issue_and_receive_banknotes(amount_to_issue: int, wid: str, spk: str) -> Opt
 
     receive_response = requests.post(f"{server_url}/receive-banknotes",
                                      json={"wid": wid, "banknotes": banknote_initial_chains})
-    receive_code = receive_response.status_code
-
-    if receive_code != 200:
+    if receive_response.status_code != 200:
         print("Не удалось получить банкноты")
         return
 
@@ -103,7 +98,7 @@ if __name__ == "__main__":
     sok_, spk_ = init_pair()
 
     # Перед началом работы регистрируем кошелек на сервере
-    wid_ = register_wallet(sok_)
+    wid_, sok_signature_ = register_wallet(sok_)
     print("wid", wid_)
 
     banknotes = issue_and_receive_banknotes(10, wid_, spk_)

@@ -15,6 +15,6 @@ class Block:
     uuid: str
     otok: str
 
-    subscribe_transaction_hash: str
-    subscribe_transaction_signature: str
+    otok_signature: str
+    transaction_signature: str
     parent_uuid: Optional[str] = None
