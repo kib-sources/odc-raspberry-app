@@ -30,9 +30,6 @@ class BluetoothService:
     def listen_for_connections(self):
         while True:
             client_sock, address = self._server_sock.accept()
-
-            self._server_sock.accept()
-
             print("Connection from ", address)
             self._client_sock = client_sock
             yield client_sock

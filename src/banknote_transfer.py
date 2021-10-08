@@ -37,6 +37,7 @@ def transfer_banknote(service: BluetoothService, wallet: Wallet, banknote: Bankn
 
     # Шаг 4
     buff = service.receive_from_client()
+    print(buff)
     acceptance_blocks = json.loads(buff)
     block = Block.from_dict(acceptance_blocks["childBlock"])
 
