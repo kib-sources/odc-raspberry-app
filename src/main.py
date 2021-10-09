@@ -13,12 +13,14 @@ def main():
 
     try:
         for client_sock in service.listen_for_connections():
-            msg = service.receive_from_client()
-            print(msg)
+            print("client connected")
             transfer_banknote(service, wallet, wallet.banknotes[0])
-    except BaseException as e:
+    except Exception as e:
         socket.close()
-        logging.critical("", exc_info=e)
+        logging.critical("catched error:", exc_info=e)
+    except KeyboardInterrupt:
+        socket.close()
+        print("Interrupted: socket closed")
 
 
 if __name__ == "__main__":

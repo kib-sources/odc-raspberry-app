@@ -13,7 +13,7 @@ class AtmService:
     _client_sock: Optional[ISocket]
 
     def __init__(self, server_socket: ISocket):
-        _server_sock = server_socket
+        self._server_sock = server_socket
         self._client_sock = None
 
     def listen_for_connections(self):
@@ -23,21 +23,11 @@ class AtmService:
             self._client_sock = client_sock
             yield client_sock
 
-    def send_to_client(self, msg: str = None, data: dict = None):
-        if msg:
-            self._client_sock.send(msg.encode("utf-8"))
-
-        if data and data is dict:
-            js = json.dumps(data)
-            print("send: ", js)
-            self._client_sock.send(js.encode("utf-8"))
-            return
-
-        if data and data is BanknoteWithBlockchain:
-            js = BanknoteWithBlockchain.to_json(data)
-            print("send: ", js)
-            self._client_sock.send(js.encode("utf-8"))
-            return
+    def send_to_client(self, data: dict):
+        js = json.dumps(data)
+        print("sending: ", js)
+        self._client_sock.send(js.encode("utf-8"))
+        return
 
     def receive_from_client(self) -> str:
         buffer = self._client_sock.recv(100)
@@ -75,10 +65,8 @@ class ServerSocketFactory:
 
     @staticmethod
     def create_tcp_socket() -> socket.socket:
-        print("creating tcp socket...")
         _server_sock = socket.socket(socket.SO_REUSEADDR)
         _server_sock.bind(("", 14900))
         _server_sock.listen(1)
         print("tcp service started")
-
         return _server_sock
