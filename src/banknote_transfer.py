@@ -1,17 +1,17 @@
 import json
 from typing import List, Union
 
-from BluetoothService import BluetoothService
+from AtmService import AtmService
 from BluetoothServiceStunt import BluetoothServiceStunt
 from core.BanknoteWithBlockchain import BanknoteWithBlockchain
 from core.Block import Block
 from core.Wallet import Wallet
 import core.crypto as crypto
 
-IBluetoothService = Union[BluetoothService, BluetoothServiceStunt]
+IBluetoothService = Union[AtmService, BluetoothServiceStunt]
 
 
-def transfer_banknotes(service: BluetoothService, wallet: Wallet, banknotes: List[BanknoteWithBlockchain]):
+def transfer_banknotes(service: AtmService, wallet: Wallet, banknotes: List[BanknoteWithBlockchain]):
     amount = sum(it.banknote.amount for it in banknotes)
     service.send_to_client(data={"amount": amount})
 

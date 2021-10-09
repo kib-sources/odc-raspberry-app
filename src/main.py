@@ -1,4 +1,4 @@
-from BluetoothServiceStunt import BluetoothServiceStunt
+from AtmService import AtmService, ServerSocketFactory
 from banknote_transfer import transfer_banknote
 from core.Wallet import Wallet
 import logging
@@ -8,7 +8,8 @@ def main():
     wallet = Wallet()
     wallet.refill(300)
 
-    service = BluetoothServiceStunt()
+    socket = ServerSocketFactory.create_tcp_socket()
+    service = AtmService(socket)
 
     try:
         for client_sock in service.listen_for_connections():
@@ -16,7 +17,7 @@ def main():
             print(msg)
             transfer_banknote(service, wallet, wallet.banknotes[0])
     except BaseException as e:
-        service.stop()
+        socket.close()
         logging.critical("", exc_info=e)
 
 
