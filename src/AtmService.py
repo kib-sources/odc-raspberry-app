@@ -3,7 +3,6 @@ from typing import Optional, Union
 import bluetooth
 import socket
 
-from core.BanknoteWithBlockchain import BanknoteWithBlockchain
 
 ISocket = Union[bluetooth.BluetoothSocket, socket.socket]
 
@@ -18,19 +17,21 @@ class AtmService:
 
     def listen_for_connections(self):
         while True:
-            client_sock, address = self._server_sock.accept()
-            print("Connection from ", address)
-            self._client_sock = client_sock
-            yield client_sock
+            connection, client_address = self._server_sock.accept()
+            print("Connection from ", client_address)
+            self._client_sock = connection
+            yield connection
 
     def send_to_client(self, data: dict):
         js = json.dumps(data)
         print("sending: ", js)
-        self._client_sock.send(js.encode("utf-8"))
+        buff = (js + "\n").encode("utf-8")
+        self._client_sock.sendall(buff)
         return
 
     def receive_from_client(self) -> str:
         buffer = self._client_sock.recv(100)
+        print("received", buffer)
         return buffer
 
     def end_client_session(self):
@@ -65,7 +66,7 @@ class ServerSocketFactory:
 
     @staticmethod
     def create_tcp_socket() -> socket.socket:
-        _server_sock = socket.socket(socket.SO_REUSEADDR)
+        _server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         _server_sock.bind(("", 14900))
         _server_sock.listen(1)
         print("tcp service started")
