@@ -11,4 +11,4 @@ from core.Block import Block
 @dataclass
 class BanknoteWithBlockchain:
     banknote: Banknote
-    blockchain: List[Block]
+    blocks: List[Block]

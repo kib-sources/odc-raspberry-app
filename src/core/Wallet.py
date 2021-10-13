@@ -3,7 +3,7 @@ from uuid import UUID
 
 from core.BanknoteWithBlockchain import BanknoteWithBlockchain
 import core.crypto as crypto
-from server_api import register_wallet, issue_and_receive_banknotes
+from bank_api import register_wallet, issue_and_receive_banknotes
 
 
 class Wallet:

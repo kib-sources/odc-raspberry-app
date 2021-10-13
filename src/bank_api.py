@@ -6,7 +6,7 @@ from core.Banknote import Banknote
 from core.BanknoteWithBlockchain import BanknoteWithBlockchain
 from core.Block import Block
 from core.crypto import hash_items, sign_with_private_key, init_pair
-from core.utils import current_epoch_time, random_numerical_string
+from core.utils import current_epoch_time, gen_uuid
 
 server_url = "http://31.186.250.158"
 
@@ -37,17 +37,14 @@ def issue_and_receive_banknotes(amount_to_issue: int, wid: str, spk: str) -> Opt
     -----END RSA PUBLIC KEY-----"""
 
     # Для получения банкнот их необходимо выпустить
-    issue_response = requests.post(f"{server_url}/issue-banknotes",
-                                   json={"amount": amount_to_issue, "wid": wid})
+    js = {"amount": amount_to_issue, "wid": wid}
+    issue_response = requests.post(f"{server_url}/issue-banknotes", json=js)
     if issue_response.status_code == 400:
         print("wid не был найден в базе данных")
         return
 
     issue_response_json = issue_response.json()
-
-    # Дополняем доступные данные
     issued_banknotes = issue_response_json["issued_banknotes"]
-
     print(f"Выпущено(-а) {len(issued_banknotes)} банкнот(-а)")
 
     # Регистрируем каждую выпущенную банкноту
@@ -61,23 +58,23 @@ def issue_and_receive_banknotes(amount_to_issue: int, wid: str, spk: str) -> Opt
         # Выбираем текущее время как время транзакции
         current_time = current_epoch_time()
         # Случайный уникальный идентификатор
-        uuid = random_numerical_string(12)
+        uuid_ = gen_uuid()
         # Хэш параметров транзакции, подписанный spk, это необходимо чтобы гарантировать валидность операции
-        transaction_hash = hash_items([uuid, otok, bnid, current_time])
+        transaction_hash = hash_items([uuid_, otok, bnid, current_time])
         transaction_signature = sign_with_private_key(transaction_hash, spk)
 
-        banknote_initial_chain = {"bnid": bnid, "otok": otok, "wid": wid, "time": current_time, "uuid": uuid,
+        banknote_initial_chain = {"bnid": bnid, "otok": otok, "wid": wid, "time": current_time, "uuid": uuid_,
                                   "otok_signature": otok_signature, "transaction_signature": transaction_signature}
         banknote_initial_chains.append(banknote_initial_chain)
 
-    receive_response = requests.post(f"{server_url}/receive-banknotes",
-                                     json={"wid": wid, "banknotes": banknote_initial_chains})
+    # Получение банкнот
+    js = {"wid": wid, "banknotes": banknote_initial_chains}
+    receive_response = requests.post(f"{server_url}/receive-banknotes", json=js)
     if receive_response.status_code != 200:
         print("Не удалось получить банкноты")
         return
 
     receive_json = receive_response.json()
-
     rejected_banknotes = receive_json["rejected_banknotes"]
     if len(rejected_banknotes) != 0:
         print(f"Ошибка при получении банкнот(-ы)")
@@ -86,10 +83,9 @@ def issue_and_receive_banknotes(amount_to_issue: int, wid: str, spk: str) -> Opt
 
     blockchains = [{**it[0], **it[1]} for it in zip(banknote_initial_chains, receive_json["received_banknotes"])]
     banknotes_with_chain = zip(issued_banknotes, blockchains)
-
     return [BanknoteWithBlockchain(
         banknote=Banknote.from_dict(it[0]),
-        blockchain=[Block.from_dict(it[1])]
+        blocks=[Block.from_dict(it[1])]
     ) for it in banknotes_with_chain]
 
 
@@ -102,5 +98,5 @@ if __name__ == "__main__":
     print("wid", wid_)
 
     banknotes = issue_and_receive_banknotes(10, wid_, spk_)
-    for banknote in banknotes:
-        print(banknote)
+    for it_ in banknotes:
+        print(it_)

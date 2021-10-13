@@ -1,13 +1,14 @@
-from dataclasses import dataclass
-from dataclasses_json import dataclass_json
+from dataclasses import dataclass, field
 from typing import Optional
+
+from dataclasses_json import DataClassJsonMixin, config, dataclass_json, LetterCase
 
 RUSSIAN_RUBLE = 643
 
 
-@dataclass_json
+@dataclass_json(letter_case=LetterCase.CAMEL)
 @dataclass
-class Block:
+class Block(DataClassJsonMixin):
     # BankNote id
     bnid: str
     magic: str
@@ -15,6 +16,7 @@ class Block:
     uuid: str
     otok: str
 
-    otok_signature: str
-    transaction_signature: str
+    transaction_hash: str
+    transaction_hash_signed: str = field(metadata=config(field_name="transactionHashSignature"))
+
     parent_uuid: Optional[str] = None

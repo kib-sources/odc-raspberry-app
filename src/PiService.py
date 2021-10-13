@@ -3,11 +3,10 @@ from typing import Optional, Union
 import bluetooth
 import socket
 
-
 ISocket = Union[bluetooth.BluetoothSocket, socket.socket]
 
 
-class AtmService:
+class PiService:
     _server_sock: ISocket
     _client_sock: Optional[ISocket]
 
@@ -39,12 +38,14 @@ class AtmService:
         self._client_sock = None
 
     def stop(self):
+        if self._client_sock:
+            self._client_sock.close()
         self._server_sock.close()
 
 
-class ServerSocketFactory:
+class AtmServiceFactory:
     @staticmethod
-    def create_bluetooth_socket() -> bluetooth.BluetoothSocket:
+    def create_bluetooth_socket() -> PiService:
         # Arbitrary uuid - must match Android side
         sid = "133f71c6-b7b6-437e-8fd1-d2f59cc76066"
 
@@ -62,12 +63,12 @@ class ServerSocketFactory:
         )
         print("bluetooth service started")
 
-        return _server_sock
+        return PiService(_server_sock)
 
     @staticmethod
-    def create_tcp_socket() -> socket.socket:
+    def create_tcp_socket() -> PiService:
         _server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         _server_sock.bind(("", 14900))
         _server_sock.listen(1)
         print("tcp service started")
-        return _server_sock
+        return PiService(_server_sock)

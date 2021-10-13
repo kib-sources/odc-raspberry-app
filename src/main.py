@@ -1,25 +1,24 @@
-from AtmService import AtmService, ServerSocketFactory
+import logging
+from PiService import AtmServiceFactory
 from banknote_transfer import transfer_banknote
 from core.Wallet import Wallet
-import logging
 
 
 def main():
     wallet = Wallet()
-    wallet.refill(300)
+    wallet.refill(20)
 
-    socket = ServerSocketFactory.create_tcp_socket()
-    service = AtmService(socket)
+    service = AtmServiceFactory.create_tcp_socket()
 
     try:
         for client_sock in service.listen_for_connections():
             print("client connected")
             transfer_banknote(service, wallet, wallet.banknotes[0])
     except Exception as e:
-        socket.close()
+        service.stop()
         logging.critical("catched error:", exc_info=e)
     except KeyboardInterrupt:
-        socket.close()
+        service.stop()
         print("Interrupted: socket closed")
 
 
