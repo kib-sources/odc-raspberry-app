@@ -21,9 +21,10 @@ def transfer_banknotes(service: PiService, wallet: Wallet, banknotes: List[Bankn
 def transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockchain: BanknoteWithBlockchain):
     otok, otpk = crypto.init_pair()
 
+    # Шаг 0
     service.send_to_client(data={"amount": banknote_with_blockchain.banknote.amount})
 
-    # Шаги 1-2
+    # Шаг 1
     protected_block = {
         "parentSok": wallet.sok,
         "parentSokSignature": wallet.sok_signature,
@@ -36,6 +37,8 @@ def transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockcha
         "sok": None,
         "sokSignature": None
     }
+
+    # Шаг 2
     payload = {
         "banknoteWithBlockchain": {
             "banknoteWithProtectedBlock": {
@@ -66,4 +69,7 @@ def transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockcha
     block.subscribe_transaction_signature = subscribe_transaction_signature
 
     # Шаг 6
-    service.send_to_client(data={"childFull": block})
+    payload = {
+        "childFull": block.to_dict()
+    }
+    service.send_to_client(data=payload)

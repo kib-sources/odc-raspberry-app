@@ -37,7 +37,6 @@ class Wallet:
     def subscribe(self, uuid: Union[UUID, str], parent_uuid: Union[UUID, str], bnid):
         parent_uuid = str(parent_uuid)
         uuid = str(uuid)
-        # TODO store uuid in _bag
         if parent_uuid not in self._bag:
             raise Exception(f"Уже передан блок с uuid={parent_uuid} или данного блока никогда не было в кошельке")
 
