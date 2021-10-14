@@ -1,13 +1,25 @@
-from BluetoothService import BluetoothService
+import logging
+from PiService import AtmServiceFactory
+from banknote_transfer import transfer_banknote
+from Wallet import Wallet
 
 
 def main():
-    service = BluetoothService()
+    wallet = Wallet()
+    wallet.refill(20)
 
-    for client_sock in service.listen_for_connections():
-        msg = service.receive_from_client()
-        print(msg)
-        service.send_to_client("hello from Raspberry Pi4\n")
+    service = AtmServiceFactory.create_tcp_socket()
+
+    try:
+        for client_sock in service.listen_for_connections():
+            print("client connected")
+            transfer_banknote(service, wallet, wallet.banknotes[0])
+    except Exception as e:
+        service.stop()
+        logging.critical("catched error:", exc_info=e)
+    except KeyboardInterrupt:
+        service.stop()
+        print("Interrupted: socket closed")
 
 
 if __name__ == "__main__":

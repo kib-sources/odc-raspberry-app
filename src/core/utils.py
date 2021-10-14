@@ -1,6 +1,5 @@
-import random
-import string
 import time
+import uuid
 
 
 def is_hex(string_to_check: str, hex_string_length: int) -> bool:
@@ -13,10 +12,6 @@ def is_hex(string_to_check: str, hex_string_length: int) -> bool:
     return True
 
 
-def random_numerical_string(numerical_string_length):
-    return ''.join(random.SystemRandom().choice(string.digits) for _ in range(numerical_string_length))
-
-
 def current_epoch_time():
     return int(time.time())
 
@@ -24,3 +19,7 @@ def current_epoch_time():
 def verify_time_is_near_current(t, epsilon):
     diff = current_epoch_time() - t
     return 0 <= diff <= epsilon
+
+
+def gen_uuid() -> str:
+    return str(uuid.uuid4())

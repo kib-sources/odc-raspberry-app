@@ -1,15 +1,13 @@
 from dataclasses import dataclass
-from dataclasses_json import dataclass_json
+from dataclasses_json import dataclass_json, DataClassJsonMixin
 from core import crypto
 
 RUSSIAN_RUBLE = 643
 
 
-@dataclass_json
 @dataclass
-class Banknote:
-    # BankNote id
-    bnid: str
+class Banknote(DataClassJsonMixin):
+    bnid: str  # BankNote id
     bin: int
     amount: int
     code: int
