@@ -1,7 +1,7 @@
 import logging
 from PiService import AtmServiceFactory
 from banknote_transfer import transfer_banknote
-from core.Wallet import Wallet
+from Wallet import Wallet
 
 
 def main():

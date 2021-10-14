@@ -15,8 +15,9 @@ class Block(DataClassJsonMixin):
     time: int
     uuid: str
     otok: str
-
     transaction_hash: str
     transaction_hash_signed: str = field(metadata=config(field_name="transactionHashSignature"))
 
+    otok_signature: str = None
+    transaction_signature: str = None
     parent_uuid: Optional[str] = None

@@ -29,9 +29,16 @@ class PiService:
         return
 
     def receive_from_client(self) -> str:
-        buffer = self._client_sock.recv(100)
-        print("received", buffer)
-        return buffer
+        # TODO readline
+        line = ""
+        while True:
+            buff = self._client_sock.recv(100).decode()
+            line += buff
+            if "\n" in buff:
+                break
+
+        print("received", line)
+        return line
 
     def end_client_session(self):
         self._client_sock.close()

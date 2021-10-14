@@ -7,7 +7,7 @@ from PiService import PiService
 from core.Banknote import Banknote
 from core.BanknoteWithBlockchain import BanknoteWithBlockchain
 from core.Block import Block
-from core.Wallet import Wallet
+from Wallet import Wallet
 
 
 def transfer_banknotes(service: PiService, wallet: Wallet, banknotes: List[BanknoteWithBlockchain]):
@@ -27,7 +27,7 @@ def transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockcha
     protected_block = {
         "parentSok": wallet.sok,
         "parentSokSignature": wallet.sok_signature,
-        "parentOtokSignature": banknote_with_blockchain.blocks[0].otok,
+        "parentOtokSignature": banknote_with_blockchain.blocks[0].otok_signature,
         "time": round(time.time()),
 
         "otokSignature": "",
@@ -51,8 +51,7 @@ def transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockcha
 
     # Шаг 4
     buff = service.receive_from_client()
-    print(buff)
-    acceptance_blocks = json.loads(buff)
+    acceptance_blocks = json.loads(buff)["blocks"]
     block = Block.from_dict(acceptance_blocks["childBlock"])
 
     # Шаг 5
