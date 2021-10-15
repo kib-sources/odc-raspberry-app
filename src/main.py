@@ -14,6 +14,7 @@ def main():
         for client_sock in service.listen_for_connections():
             print("client connected")
             transfer_banknote(service, wallet, wallet.banknotes[0])
+            del wallet.banknotes[0]
     except Exception as e:
         service.stop()
         logging.critical("catched error:", exc_info=e)
