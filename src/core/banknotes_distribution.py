@@ -8,17 +8,18 @@ from core.BanknoteWithBlockchain import BanknoteWithBlockchain
 
 def select_banknotes_from_bag(bag: List[BanknoteWithBlockchain], amount: int):
     give_amounts = _split_banknotes_from_amount(amount)
-
     banknotes_in_wallet = [(it.banknote.amount, idx) for idx, it in enumerate(bag)]
 
     banknotes_to_give = list()
-    for key, group in groupby(banknotes_in_wallet, lambda it: it[0]):
+    for key, group in groupby(banknotes_in_wallet, itemgetter(0)):
+        if sum(map(itemgetter(0), banknotes_to_give)) == amount:
+            break
+
         if key in give_amounts.keys():
             banknotes_to_give += list(group)[:give_amounts[key]]
 
     sum_ = sum(map(itemgetter(0), banknotes_to_give))
-    print("sum_", sum_)
-    assert sum_ == amount, f"Not enough bucks! Only {sum_} remaining"
+    assert sum_ == amount, f"Not enough bucks! Only {sum_} remaining, but {amount} needed"
 
     return list(map(itemgetter(1), banknotes_to_give))
 

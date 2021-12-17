@@ -32,8 +32,6 @@ def transfer_banknotes(service: PiService, wallet: Wallet, pulse_count: int):
 
 
 def _transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockchain: BanknoteWithBlockchain):
-    logging.info(f"transferring {banknote_with_blockchain.banknote.amount} bucks")
-
     # Шаг 0
     service.send_to_client(data={"amount": banknote_with_blockchain.banknote.amount})
 
