@@ -6,8 +6,6 @@ from PiService import AtmServiceFactory
 from Wallet import Wallet
 from banknote_transfer import transfer_banknotes
 
-errors = set()
-
 
 def handle_client_connection():
     logging.debug("client connected")
@@ -29,6 +27,8 @@ def handle_client_connection():
         try:
             msg = service.client_sock.recv(1024)
             if msg == b'' or msg == b'make me cum\n':
+                print(msg)
+                print("+++client disconnected+++")
                 raise Exception("client disconnected")
 
             print(msg)
@@ -49,8 +49,9 @@ if __name__ == "__main__":
                 handle_client_connection()
             except Exception as e:
                 logging.error("client disconnected", exc_info=e)
-                print(errors)
                 sm_driver.set_active(is_active=False)
+                client_sock.close()
+                service.client_sock = None
     except Exception as e:
         service.stop()
         logging.critical("catched error:", exc_info=e)

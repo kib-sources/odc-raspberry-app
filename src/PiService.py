@@ -1,8 +1,7 @@
 import json
-import logging
-from typing import Optional, Union
 # import bluetooth
 import socket
+from typing import Optional
 
 # ISocket = Union[bluetooth.BluetoothSocket, socket.socket]
 ISocket = socket.socket
@@ -19,7 +18,7 @@ class PiService:
     def listen_for_connections(self):
         while True:
             connection, client_address = self._server_sock.accept()
-            logging.info("Connection from ", client_address)
+            print("Connection from ", client_address)
             self.client_sock = connection
             yield connection
 
@@ -75,7 +74,7 @@ class AtmServiceFactory:
     @staticmethod
     def create_tcp_socket() -> PiService:
         _server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        _server_sock.bind(("", 14900))
+        _server_sock.bind(("", 14901))
         _server_sock.listen(1)
         print("tcp service started")
         return PiService(_server_sock)
