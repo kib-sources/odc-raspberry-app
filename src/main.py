@@ -10,7 +10,6 @@ def handle_client_connection():
     logging.info("client connected")
 
     def on_bucks_inserted(pulse_count):
-        logging.info(f"bucks inserted: {pulse_count}")
         transfer_banknotes(service, wallet, pulse_count)
 
     sm_driver.set_active(is_active=True)
