@@ -1,7 +1,7 @@
 import logging
 import socket
 
-import sm_driver
+from sm_driver import SmDriver
 from PiService import AtmServiceFactory
 from Wallet import Wallet
 from banknote_transfer import transfer_banknotes
@@ -16,7 +16,6 @@ def handle_client_connection():
         service.client_sock.setblocking(False)
 
     sm_driver.set_active(is_active=True)
-
     service.client_sock.setblocking(False)
 
     for _ in sm_driver.update_loop(callback=on_bucks_inserted, verbose=True):
@@ -27,11 +26,7 @@ def handle_client_connection():
         try:
             msg = service.client_sock.recv(1024)
             if msg == b'' or msg == b'make me cum\n':
-                print(msg)
-                print("+++client disconnected+++")
                 raise Exception("client disconnected")
-
-            print(msg)
         except socket.error:
             pass
 
@@ -41,7 +36,7 @@ if __name__ == "__main__":
     wallet.refill(10000)
 
     service = AtmServiceFactory.create_tcp_socket()
-    sm_driver.initialise_pins()
+    sm_driver = SmDriver()
 
     try:
         for client_sock in service.listen_for_connections():
