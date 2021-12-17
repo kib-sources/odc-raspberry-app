@@ -5,7 +5,7 @@ from Wallet import Wallet
 from banknote_transfer import transfer_banknotes
 from sm_driver import SmDriver
 
-logging.getLogger().setLevel(logging.DEBUG)
+logging.getLogger().setLevel(logging.INFO)
 
 
 def handle_client_connection():
