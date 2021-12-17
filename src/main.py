@@ -7,7 +7,7 @@ import sm_driver
 
 
 def handle_client_connection():
-    print("client connected")
+    logging.debug("client connected")
 
     def on_bucks_inserted(pulse_count):
         transfer_banknotes(service, wallet, pulse_count)

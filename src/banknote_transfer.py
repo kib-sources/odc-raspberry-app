@@ -14,7 +14,7 @@ from core.banknotes_distribution import select_banknotes_from_bag
 def transfer_banknotes(service: PiService, wallet: Wallet, pulse_count: int):
     banknote_map = {2: 50, 3: 100, 4: 500, 5: 1000, 6: 5000, 7: 200, 8: 2000}
     amount = banknote_map[pulse_count]
-    print(f"bucks inserted: {amount}")
+    logging.info(f"bucks inserted: {amount}")
 
     try:
         select_banknotes_from_bag(wallet.banknotes, amount)
@@ -25,13 +25,11 @@ def transfer_banknotes(service: PiService, wallet: Wallet, pulse_count: int):
     for i in sublist_indexes:
         _transfer_banknote(service=service, wallet=wallet, banknote_with_blockchain=wallet.banknotes[i])
 
-    for i in sublist_indexes:
+    for i in sublist_indexes[::-1]:
         del wallet.banknotes[i]
 
 
 def _transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockchain: BanknoteWithBlockchain):
-    print("sending", banknote_with_blockchain.banknote.amount, "bucks")
-
     otok, otpk = crypto.init_pair()
 
     # Шаг 0
@@ -62,7 +60,7 @@ def _transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockch
         }
     }
     service.send_to_client(data=payload)
-    print("protected block transfered")
+    logging.debug("protected block transfered")
 
     # Шаг 3 (на клиенте)
 
@@ -87,4 +85,4 @@ def _transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockch
         "childFull": block.to_dict()
     }
     service.send_to_client(data=payload)
-    print("banknote transfered")
+    logging.debug("banknote transfered")

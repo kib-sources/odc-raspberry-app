@@ -1,3 +1,4 @@
+from collections import Counter
 from itertools import groupby
 from operator import itemgetter
 from typing import List
@@ -6,7 +7,7 @@ from core.BanknoteWithBlockchain import BanknoteWithBlockchain
 
 
 def select_banknotes_from_bag(bag: List[BanknoteWithBlockchain], amount: int):
-    give_amounts = _split_bucks_from_amount(amount)
+    give_amounts = _split_banknotes_from_amount(amount)
 
     banknotes_in_wallet = [(it.banknote.amount, idx) for idx, it in enumerate(bag)]
 
@@ -15,51 +16,30 @@ def select_banknotes_from_bag(bag: List[BanknoteWithBlockchain], amount: int):
         if key in give_amounts.keys():
             banknotes_to_give += list(group)[:give_amounts[key]]
 
-    assert sum(map(itemgetter(0), banknotes_to_give)) <= amount, f"Not enough bucks! Only {sum(map(itemgetter(0), banknotes_to_give))} gathered"
+    sum_ = sum(map(itemgetter(0), banknotes_to_give))
+    assert sum_ <= amount, f"Not enough bucks! Only {sum_} remaining"
 
     return list(map(itemgetter(1), banknotes_to_give))
 
 
-def _split_bucks_from_amount(amount: int):
-    give_amounts = dict()
+def _split_banknotes_from_amount(amount: int):
+    possible_amounts = [1, 2, 5, 10, 50, 100, 500, 1000, 2000, 5000]
 
-    banknote_amounts = [
-        [1, 30], [2, 30], [5, 10],
-        [10, 10], [50, 10],
-        [100, 10], [500, 10],
-        [1000, 10], [2000, 10], [5000, 10]
-    ]
+    give_amounts = []
+    for i in range(len(possible_amounts) - 1):
+        give_amounts += [possible_amounts[i]] * (possible_amounts[i + 1] // possible_amounts[i] - 1)
 
-    is_forward = True
-    while True:
-        for banknote_amount in banknote_amounts:
-            count = amount // banknote_amount[0]
+    give_amounts += [2, 1000]
+    give_amounts = sorted(give_amounts)
 
-            if count > banknote_amount[1]:
-                count = banknote_amount[1]
+    for i in range(len(give_amounts)):
+        bundle = give_amounts[:i + 1]
+        if sum(bundle) >= amount:
+            return dict(Counter(bundle))
 
-            if count == 0:
-                continue
-
-            if banknote_amount[0] not in give_amounts:
-                give_amounts[banknote_amount[0]] = count
-            else:
-                give_amounts[banknote_amount[0]] += count
-
-            amount -= count * banknote_amount[0]
-            if amount == 0:
-                break
-
-        if amount == 0:
-            break
-
-        if is_forward:
-            is_forward = False
-            banknote_amounts = list(reversed(banknote_amounts))
-
-    return give_amounts
+    return dict(Counter(give_amounts))
 
 
 # Example
 if __name__ == "__main__":
-    print(_split_bucks_from_amount(1000))
+    print(_split_banknotes_from_amount(5000))
