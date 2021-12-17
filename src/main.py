@@ -22,16 +22,18 @@ def handle_client_connection():
     service.client_sock.setblocking(False)
 
     for _ in sm_driver.update_loop(callback=on_bucks_inserted, verbose=True):
+        # banknotes transfer in progress
         if service.client_sock.getblocking():
             continue
 
         try:
             msg = service.client_sock.recv(1024)
+            if msg == b'' or msg == b'make me cum\n':
+                raise Exception("client disconnected")
+
             print(msg)
-        except socket.error as e:
-            errors.add(str(e))
-        except BaseException as e:
-            errors.add(str(e))
+        except socket.error:
+            pass
 
 
 if __name__ == "__main__":
