@@ -1,10 +1,11 @@
 import logging
-import socket
 
-from sm_driver import SmDriver
 from PiService import AtmServiceFactory
 from Wallet import Wallet
 from banknote_transfer import transfer_banknotes
+from sm_driver import SmDriver
+
+logging.getLogger().setLevel(logging.DEBUG)
 
 
 def handle_client_connection():
@@ -18,17 +19,9 @@ def handle_client_connection():
     sm_driver.set_active(is_active=True)
     service.client_sock.setblocking(False)
 
-    for _ in sm_driver.update_loop(callback=on_bucks_inserted, verbose=True):
-        # banknotes transfer in progress
-        if service.client_sock.getblocking():
-            continue
-
-        try:
-            msg = service.client_sock.recv(1024)
-            if msg == b'' or msg == b'make me cum\n':
-                raise Exception("client disconnected")
-        except socket.error:
-            pass
+    for _ in sm_driver.update_loop(callback=on_bucks_inserted):
+        if not service.is_client_connected():
+            break
 
 
 if __name__ == "__main__":
@@ -43,10 +36,12 @@ if __name__ == "__main__":
             try:
                 handle_client_connection()
             except Exception as e:
-                logging.error("client disconnected", exc_info=e)
-                sm_driver.set_active(is_active=False)
-                client_sock.close()
-                service.client_sock = None
+                logging.error("err", exc_info=e)
+
+            logging.info("client disconnected")
+            sm_driver.set_active(is_active=False)
+            client_sock.close()
+            service.client_sock = None
     except Exception as e:
         service.stop()
         logging.critical("catched error:", exc_info=e)

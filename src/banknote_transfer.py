@@ -30,6 +30,7 @@ def transfer_banknotes(service: PiService, wallet: Wallet, pulse_count: int):
 
 
 def _transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockchain: BanknoteWithBlockchain):
+    logging.debug("transfer", banknote_with_blockchain.banknote.amount, "bucks")
     otok, otpk = crypto.init_pair()
 
     # Шаг 0
@@ -60,7 +61,6 @@ def _transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockch
         }
     }
     service.send_to_client(data=payload)
-    logging.debug("protected block transfered")
 
     # Шаг 3 (на клиенте)
 
@@ -85,4 +85,3 @@ def _transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockch
         "childFull": block.to_dict()
     }
     service.send_to_client(data=payload)
-    logging.debug("banknote transfered")

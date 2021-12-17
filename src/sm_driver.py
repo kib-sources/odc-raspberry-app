@@ -1,3 +1,4 @@
+import logging
 from time import sleep
 
 import RPi.GPIO as gpio
@@ -22,7 +23,7 @@ class SmDriver:
     def set_active(is_active):
         gpio.output(27, gpio.HIGH if is_active else gpio.LOW)
 
-    def update_loop(self, callback, *, verbose=False):
+    def update_loop(self, callback):
         # Update loop
         while True:
             sleep(0.4)
@@ -32,8 +33,7 @@ class SmDriver:
                 continue
 
             callback(self.pulse_count)
-            if verbose:
-                print(f"PULSE {self.pulse_count}")
+            logging.debug(f"PULSE {self.pulse_count}")
 
             self.last_pulse_count = 0
             self.pulse_count = 0

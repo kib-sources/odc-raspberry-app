@@ -48,6 +48,20 @@ class PiService:
 
         self._server_sock.close()
 
+    def is_client_connected(self):
+        # banknotes transfer in progress
+        if self.client_sock.getblocking():
+            return True
+
+        try:
+            msg = self.client_sock.recv(1024)
+            if msg == b'' or msg == b'end\n':
+                return False
+        except socket.error:
+            pass
+
+        return True
+
 
 class AtmServiceFactory:
     @staticmethod
