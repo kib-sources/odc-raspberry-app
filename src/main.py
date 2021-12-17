@@ -7,13 +7,16 @@ import sm_driver
 
 
 def handle_client_connection():
-    logging.info("client connected")
+    print("client connected")
 
     def on_bucks_inserted(pulse_count):
+        print("on_bucks_inserted")
         transfer_banknotes(service, wallet, pulse_count)
 
     sm_driver.set_active(is_active=True)
+    print("sm_driver is_active, running loop...")
     sm_driver.update_loop(callback=on_bucks_inserted, verbose=True)
+    print("loop ended!")
 
 
 if __name__ == "__main__":
@@ -29,7 +32,7 @@ if __name__ == "__main__":
             try:
                 handle_client_connection()
             except Exception as e:
-                logging.info("client disconnected")
+                print("client disconnected")
                 sm_driver.set_active(is_active=False)
     except Exception as e:
         service.stop()
