@@ -1,9 +1,10 @@
 import json
 from typing import Optional, Union
-import bluetooth
+# import bluetooth
 import socket
 
-ISocket = Union[bluetooth.BluetoothSocket, socket.socket]
+# ISocket = Union[bluetooth.BluetoothSocket, socket.socket]
+ISocket = socket.socket
 
 
 class PiService:

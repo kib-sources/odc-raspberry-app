@@ -14,9 +14,7 @@ def handle_client_connection():
         transfer_banknote(service, wallet, wallet.banknotes[0])
         del wallet.banknotes[0]
 
-    for _ in update_loop(callback=on_bucks_inserted):
-        if not service.client_sock.connected:
-            break
+    update_loop(callback=on_bucks_inserted)
 
 
 if __name__ == "__main__":
