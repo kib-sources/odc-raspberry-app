@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import Optional, Union
 # import bluetooth
 import socket
@@ -18,7 +19,7 @@ class PiService:
     def listen_for_connections(self):
         while True:
             connection, client_address = self._server_sock.accept()
-            print("Connection from ", client_address)
+            logging.info("Connection from ", client_address)
             self.client_sock = connection
             yield connection
 

@@ -29,6 +29,7 @@ def update_loop(callback, *, verbose=False):
     # Update loop
     while True:
         sleep(0.4)
+        yield
         if pulse_count == 0 or last_pulse_count != pulse_count:
             last_pulse_count = pulse_count
             continue
