@@ -74,7 +74,7 @@ class AtmServiceFactory:
     @staticmethod
     def create_tcp_socket() -> PiService:
         _server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        _server_sock.bind(("", 14901))
+        _server_sock.bind(("", 14900))
         _server_sock.listen(1)
         print("tcp service started")
         return PiService(_server_sock)
