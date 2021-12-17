@@ -47,6 +47,7 @@ class PiService:
     def stop(self):
         if self.client_sock:
             self.client_sock.close()
+
         self._server_sock.close()
 
 

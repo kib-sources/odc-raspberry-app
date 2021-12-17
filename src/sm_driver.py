@@ -1,4 +1,4 @@
-import time
+from time import sleep
 
 import RPi.GPIO as gpio
 
@@ -19,8 +19,7 @@ def update_loop(callback, *, verbose=False):
 
     # Update loop
     while True:
-        time.sleep(0.4)
-        yield
+        sleep(0.4)
 
         if pulse_count == 0 or last_pulse_count != pulse_count:
             last_pulse_count = pulse_count
@@ -29,6 +28,7 @@ def update_loop(callback, *, verbose=False):
         callback(pulse_count)
         if verbose:
             print(f"PULSE {pulse_count}")
+
         last_pulse_count = 0
         pulse_count = 0
 

@@ -14,7 +14,7 @@ def handle_client_connection():
         transfer_banknote(service, wallet, wallet.banknotes[0])
         del wallet.banknotes[0]
 
-    update_loop(callback=on_bucks_inserted)
+    update_loop(callback=on_bucks_inserted, verbose=True)
 
 
 if __name__ == "__main__":
