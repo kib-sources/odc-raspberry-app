@@ -10,20 +10,14 @@ def handle_client_connection():
     print("client connected")
 
     def on_bucks_inserted(pulse_count):
-        try:
-            transfer_banknotes(service, wallet, pulse_count)
-        except Exception:
-            logging.exception("cannot send bucks")
+        transfer_banknotes(service, wallet, pulse_count)
 
     sm_driver.set_active(is_active=True)
-    print("sm_driver is_active, running loop...")
     sm_driver.update_loop(callback=on_bucks_inserted, verbose=True)
-    print("loop ended!")
 
 
 if __name__ == "__main__":
     wallet = Wallet()
-    logging.info("refilling banknotes bag...")
     wallet.refill(10000)
 
     service = AtmServiceFactory.create_tcp_socket()
