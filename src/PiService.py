@@ -8,31 +8,30 @@ ISocket = Union[bluetooth.BluetoothSocket, socket.socket]
 
 class PiService:
     _server_sock: ISocket
-    _client_sock: Optional[ISocket]
+    client_sock: Optional[ISocket]
 
     def __init__(self, server_socket: ISocket):
         self._server_sock = server_socket
-        self._client_sock = None
+        self.client_sock = None
 
     def listen_for_connections(self):
         while True:
             connection, client_address = self._server_sock.accept()
             print("Connection from ", client_address)
-            self._client_sock = connection
+            self.client_sock = connection
             yield connection
 
     def send_to_client(self, data: dict):
         js = json.dumps(data)
         print("sending: ", js)
         buff = (js + "\n").encode("utf-8")
-        self._client_sock.sendall(buff)
+        self.client_sock.sendall(buff)
         return
 
     def receive_from_client(self) -> str:
-        # TODO readline
         line = ""
         while True:
-            buff = self._client_sock.recv(100).decode()
+            buff = self.client_sock.recv(100).decode()
             line += buff
             if "\n" in buff:
                 break
@@ -41,12 +40,12 @@ class PiService:
         return line
 
     def end_client_session(self):
-        self._client_sock.close()
-        self._client_sock = None
+        self.client_sock.close()
+        self.client_sock = None
 
     def stop(self):
-        if self._client_sock:
-            self._client_sock.close()
+        if self.client_sock:
+            self.client_sock.close()
         self._server_sock.close()
 
 
