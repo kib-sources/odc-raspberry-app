@@ -24,7 +24,6 @@ class PiService:
 
     def send_to_client(self, data: dict):
         js = json.dumps(data)
-        print("sending: ", js)
         buff = (js + "\n").encode("utf-8")
         self.client_sock.sendall(buff)
         return
@@ -37,7 +36,6 @@ class PiService:
             if "\n" in buff:
                 break
 
-        print("received", line)
         return line
 
     def end_client_session(self):

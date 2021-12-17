@@ -49,6 +49,7 @@ def transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockcha
         }
     }
     service.send_to_client(data=payload)
+    print("protected block transfered")
 
     # Шаг 3 (на клиенте)
 
@@ -73,3 +74,4 @@ def transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockcha
         "childFull": block.to_dict()
     }
     service.send_to_client(data=payload)
+    print("banknote transfered")
