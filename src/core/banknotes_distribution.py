@@ -15,6 +15,8 @@ def select_banknotes_from_bag(bag: List[BanknoteWithBlockchain], amount: int):
         if key in give_amounts.keys():
             banknotes_to_give += list(group)[:give_amounts[key]]
 
+    assert sum(map(itemgetter(0), banknotes_to_give)) < amount, f"Not enough bucks! Only {sum(map(itemgetter(0), banknotes_to_give))} gathered"
+
     return list(map(itemgetter(1), banknotes_to_give))
 
 

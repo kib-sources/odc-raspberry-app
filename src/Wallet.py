@@ -7,6 +7,7 @@ from core import crypto
 from core.Banknote import Banknote
 from core.BanknoteWithBlockchain import BanknoteWithBlockchain
 from core.Block import Block
+from core.banknotes_distribution import select_banknotes_from_bag
 from core.crypto import hash_items, sign_with_private_key
 from core.utils import current_epoch_time, gen_uuid
 
@@ -155,7 +156,16 @@ class Wallet:
 if __name__ == "__main__":
     wallet_ = Wallet()
     wallet_.refill(300)
-    wallet_.refill(25)
+    wallet_.refill(250)
 
     print("$", wallet_.deposit_amount())
     print(len(wallet_.banknotes), "банкнот")
+
+    try:
+        sublist_indexes = select_banknotes_from_bag(wallet_.banknotes, 500)
+    except AssertionError:
+        wallet_.refill(500)
+        print("$", wallet_.deposit_amount())
+        sublist_indexes = select_banknotes_from_bag(wallet_.banknotes, 500)
+
+    print(sublist_indexes)
