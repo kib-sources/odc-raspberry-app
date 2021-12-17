@@ -1,24 +1,28 @@
 import json
 import time
-from typing import List
 
 import core.crypto as crypto
 from PiService import PiService
+from Wallet import Wallet
 from core.Banknote import Banknote
 from core.BanknoteWithBlockchain import BanknoteWithBlockchain
 from core.Block import Block
-from Wallet import Wallet
+from core.banknotes_distribution import select_banknotes_from_bag
 
 
-def transfer_banknotes(service: PiService, wallet: Wallet, banknotes: List[BanknoteWithBlockchain]):
-    amount = sum(it.banknote.amount for it in banknotes)
-    service.send_to_client(data={"amount": amount})
+def transfer_banknotes(service: PiService, wallet: Wallet, pulse_count: int):
+    banknote_map = {2: 50, 3: 100, 4: 500, 5: 1000, 6: 5000, 7: 200, 8: 2000}
+    amount = banknote_map[pulse_count]
 
-    for banknote in banknotes:
-        transfer_banknote(service=service, wallet=wallet, banknote_with_blockchain=banknote)
+    sublist_indexes = select_banknotes_from_bag(wallet.banknotes, amount)
+    for i in sublist_indexes:
+        _transfer_banknote(service=service, wallet=wallet, banknote_with_blockchain=wallet.banknotes[i])
+
+    for i in sublist_indexes:
+        del wallet.banknotes[i]
 
 
-def transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockchain: BanknoteWithBlockchain):
+def _transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockchain: BanknoteWithBlockchain):
     otok, otpk = crypto.init_pair()
 
     # Шаг 0

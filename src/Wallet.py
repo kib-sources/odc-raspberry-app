@@ -1,5 +1,4 @@
-from typing import List, Union
-from typing import Optional
+from typing import List, Union, Optional
 from uuid import UUID
 
 import requests
