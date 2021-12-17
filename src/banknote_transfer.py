@@ -2,7 +2,6 @@ import json
 import logging
 import time
 
-import core.crypto as crypto
 from PiService import PiService
 from Wallet import Wallet
 from core.Banknote import Banknote
@@ -16,10 +15,13 @@ def transfer_banknotes(service: PiService, wallet: Wallet, pulse_count: int):
     amount = banknote_map[pulse_count]
     logging.info(f"bucks inserted: {amount}")
 
-    try:
-        select_banknotes_from_bag(wallet.banknotes, amount)
-    except AssertionError:
-        wallet.refill(amount)
+    while True:
+        try:
+            select_banknotes_from_bag(wallet.banknotes, amount)
+            break
+        except AssertionError:
+            wallet.refill(max([amount, 2000]))
+            continue
 
     sublist_indexes = select_banknotes_from_bag(wallet.banknotes, amount)
     for i in sublist_indexes:
@@ -30,8 +32,7 @@ def transfer_banknotes(service: PiService, wallet: Wallet, pulse_count: int):
 
 
 def _transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockchain: BanknoteWithBlockchain):
-    logging.info(f"transfer {banknote_with_blockchain.banknote.amount} bucks")
-    otok, otpk = crypto.init_pair()
+    logging.info(f"transferring {banknote_with_blockchain.banknote.amount} bucks")
 
     # Шаг 0
     service.send_to_client(data={"amount": banknote_with_blockchain.banknote.amount})
@@ -85,4 +86,3 @@ def _transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockch
         "childFull": block.to_dict()
     }
     service.send_to_client(data=payload)
-    logging.info(f"transfered successfully")

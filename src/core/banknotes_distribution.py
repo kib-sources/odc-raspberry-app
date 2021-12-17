@@ -43,4 +43,4 @@ def _split_banknotes_from_amount(amount: int):
 
 # Example
 if __name__ == "__main__":
-    print(_split_banknotes_from_amount(5000))
+    print(_split_banknotes_from_amount(50))

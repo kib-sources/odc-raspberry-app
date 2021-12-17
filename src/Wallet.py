@@ -1,3 +1,4 @@
+from collections import Counter
 from typing import List, Union, Optional
 from uuid import UUID
 
@@ -155,17 +156,9 @@ class Wallet:
 # Example
 if __name__ == "__main__":
     wallet_ = Wallet()
-    wallet_.refill(300)
-    wallet_.refill(250)
+    wallet_.refill(2000)
 
     print("$", wallet_.deposit_amount())
-    print(len(wallet_.banknotes), "банкнот")
 
-    try:
-        sublist_indexes = select_banknotes_from_bag(wallet_.banknotes, 500)
-    except AssertionError:
-        wallet_.refill(500)
-        print("$", wallet_.deposit_amount())
-        sublist_indexes = select_banknotes_from_bag(wallet_.banknotes, 500)
-
-    print(sublist_indexes)
+    banknotes_in_wallet = [it.banknote.amount for idx, it in enumerate(wallet_.banknotes)]
+    print(dict(Counter(banknotes_in_wallet)))
