@@ -18,7 +18,8 @@ class PiService:
     def listen_for_connections(self):
         while True:
             connection, client_address = self._server_sock.accept()
-            print("Connection from ", client_address)
+            # print("Connection from ", client_address)
+            print("New Connection")
             self.client_sock = connection
             yield connection
 
@@ -90,5 +91,6 @@ class AtmServiceFactory:
         _server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         _server_sock.bind(("", 14900))
         _server_sock.listen(1)
-        print("tcp service started")
+        # print("tcp service started")
+        print("bluetooth service started")
         return PiService(_server_sock)

@@ -17,8 +17,8 @@ def select_banknotes_from_bag(bag: List[BanknoteWithBlockchain], amount: int):
             banknotes_to_give += list(group)[:give_amounts[key]]
 
     sum_ = sum(map(itemgetter(0), banknotes_to_give))
-    print("sum_", sum_)
-    assert sum_ == amount, f"Not enough bucks! Only {sum_} remaining, but {amount} needed. {banknotes_to_give}"
+    print("transferring", sum_)
+    assert sum_ == amount, f"Not enough banknotes! Only {sum_} remaining, but {amount} needed. {banknotes_to_give}"
 
     return list(map(itemgetter(1), banknotes_to_give))
 

@@ -13,7 +13,7 @@ from core.banknotes_distribution import select_banknotes_from_bag
 def transfer_banknotes(service: PiService, wallet: Wallet, pulse_count: int):
     banknote_map = {2: 50, 3: 100, 4: 500, 5: 1000, 6: 5000, 7: 200, 8: 2000}
     amount = banknote_map[pulse_count]
-    logging.info(f"bucks inserted: {amount}")
+    logging.info(f"banknote inserted: {amount}")
 
     try:
         select_banknotes_from_bag(wallet.banknotes, amount)
