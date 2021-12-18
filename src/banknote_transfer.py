@@ -15,13 +15,10 @@ def transfer_banknotes(service: PiService, wallet: Wallet, pulse_count: int):
     amount = banknote_map[pulse_count]
     logging.info(f"bucks inserted: {amount}")
 
-    while True:
-        try:
-            select_banknotes_from_bag(wallet.banknotes, amount)
-            break
-        except AssertionError:
-            wallet.refill(max([amount, 2000]))
-            continue
+    try:
+        select_banknotes_from_bag(wallet.banknotes, amount)
+    except AssertionError:
+        wallet.refill(max([amount, 2000]))
 
     sublist_indexes = select_banknotes_from_bag(wallet.banknotes, amount)
     for i in sublist_indexes:

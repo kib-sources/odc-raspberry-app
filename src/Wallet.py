@@ -1,4 +1,6 @@
 from collections import Counter
+from itertools import groupby
+from operator import itemgetter
 from typing import List, Union, Optional
 from uuid import UUID
 
@@ -162,5 +164,3 @@ if __name__ == "__main__":
     print("$", wallet_.deposit_amount())
     banknotes_in_wallet = [it.banknote.amount for idx, it in enumerate(wallet_.banknotes)]
     print("bucks in wallet", dict(Counter(banknotes_in_wallet)))
-
-    select_banknotes_from_bag(wallet_.banknotes, 50)
