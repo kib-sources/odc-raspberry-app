@@ -52,7 +52,7 @@ class Wallet:
 
         # Удаляем ключ, чтобы более ни разу нельзя было подписывать
         #   в нормальном решении необходимо хранение на доверенном носителе, например на SIM
-        del self._bag[parent_uuid]
+        # del self._bag[parent_uuid]
 
         return magic, _subscribe_transaction_hash, _subscribe_transaction_signature
 
