@@ -16,6 +16,7 @@ class PiService:
         self.client_sock = None
 
     def listen_for_connections(self):
+        """Ожидает подключение нового клиента"""
         while True:
             connection, client_address = self._server_sock.accept()
             # print("Connection from ", client_address)
@@ -24,12 +25,18 @@ class PiService:
             yield connection
 
     def send_to_client(self, data: dict):
+        """Отправляет пакет данных на устройство клиента
+        :param data: пакет данных, который будут отправлен на устройство клиента
+        """
         js = json.dumps(data)
         buff = (js + "\n").encode("utf-8")
         self.client_sock.sendall(buff)
         return
 
     def receive_from_client(self) -> str:
+        """Ожидает пакет данных от устройства клиента
+        :return: пакет данных, который пришел с устройства клиента
+        """
         line = ""
         while True:
             buff = self.client_sock.recv(100).decode()
@@ -39,17 +46,18 @@ class PiService:
 
         return line
 
-    def end_client_session(self):
+    def _end_client_session(self):
         self.client_sock.close()
         self.client_sock = None
 
     def stop(self):
+        """Отстанавливает Bluetooth сервис и отключает текущего клиента"""
         if self.client_sock:
             self.client_sock.close()
 
         self._server_sock.close()
 
-    def is_client_connected(self):
+    def _is_client_connected(self):
         # banknotes transfer in progress
         if self.client_sock.getblocking():
             return True
@@ -67,6 +75,10 @@ class PiService:
 class AtmServiceFactory:
     @staticmethod
     def create_bluetooth_socket() -> PiService:
+        """Создает объект класса PiService и активирует Bluetooth сервис
+        :return: объект класса PiService, с запущенным Bluetooth сервисом
+        """
+
         # Arbitrary uuid - must match Android side
         sid = "133f71c6-b7b6-437e-8fd1-d2f59cc76066"
 
@@ -88,6 +100,7 @@ class AtmServiceFactory:
 
     @staticmethod
     def create_tcp_socket() -> PiService:
+        """Метод для отладки. Не использовать при эксплуатации."""
         _server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         _server_sock.bind(("", 14900))
         _server_sock.listen(1)

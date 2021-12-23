@@ -20,7 +20,7 @@ def handle_client_connection():
     service.client_sock.setblocking(False)
 
     for _ in sm_driver.update_loop(callback=on_bucks_inserted):
-        if not service.is_client_connected():
+        if not service._is_client_connected():
             break
 
 

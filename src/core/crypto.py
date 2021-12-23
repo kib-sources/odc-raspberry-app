@@ -14,6 +14,11 @@ def hash_items(items):
 
 
 def sign_with_private_key(item, key):
+    """Создает цифровую подпись для переданного объекта
+    :param item: объект, от которого следует взять хэш
+    :param key: ключ для хэширования
+    :return: хэш-сумма переданного объекта
+    """
     private_key = rsa.PrivateKey.load_pkcs1(key.encode())
     data = bytes(bytearray.fromhex(item))
     signed_data = rsa.sign(data, private_key, "SHA-256").hex()
@@ -73,6 +78,12 @@ def signature(hex_hash: str, privkey: str) -> str:
 
 
 def verify_signature(hex_hash: str, hex_signature: str, publickey: str) -> bool:
+    """Выполняет проверку подлинности цифровой подписи
+    :param hex_hash: подписанный хэш
+    :param hex_signature: подпись, для которой следует выполнить проверку
+    :param publickey: публичный ключ из использованный для подписи связки
+    :return: истина, в случае совпадения подписи, иначе ложь
+    """
     assert len(hex_hash) == 64
     _publickey = rsa.PublicKey.load_pkcs1(publickey.encode())
 

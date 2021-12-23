@@ -21,10 +21,16 @@ class SmDriver:
 
     @staticmethod
     def set_active(is_active):
+        """Устанавливает купюроприемник в состояние вкл/выкл
+        :param is_active: флаг, отвечающий за состояние, в которое будет переведен купюроприемник
+        """
         gpio.output(27, gpio.HIGH if is_active else gpio.LOW)
 
     def update_loop(self, callback):
-        # Update loop
+        """Ожидает сигнал от купюроприемника о приеме курюры
+        :param callback: функция, которая будет вызвана при вставке купюры
+        """
+
         while True:
             sleep(0.4)
             yield

@@ -7,6 +7,12 @@ from core.BanknoteWithBlockchain import BanknoteWithBlockchain
 
 
 def select_banknotes_from_bag(bag: List[BanknoteWithBlockchain], amount: int):
+    """Выбирает цифровые банкноты из хранилища для передачи клиенту
+    :param bag : массив цифровых банкнот, хранимых в банкомате
+    :param amount : сумма для передачи
+    :return: банкноты для передачи
+    """
+
     give_amounts = _split_banknotes_from_amount(amount)
     banknotes_in_wallet = [(it.banknote.amount, idx) for idx, it in enumerate(bag)]
     banknotes_in_wallet = sorted(banknotes_in_wallet, key=itemgetter(0))

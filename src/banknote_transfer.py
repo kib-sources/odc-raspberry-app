@@ -11,6 +11,12 @@ from core.banknotes_distribution import select_banknotes_from_bag
 
 
 def transfer_banknotes(service: PiService, wallet: Wallet, pulse_count: int):
+    """Передает указанную сумму текущему клиенту
+
+    :param pulse_count: объект класса PiService
+    :param wallet: объект класса Wallet
+    :param service: количество цифровых сигналов, пришедших на пин от купюроприемника
+    """
     banknote_map = {2: 50, 3: 100, 4: 500, 5: 1000, 6: 5000, 7: 200, 8: 2000}
     amount = banknote_map[pulse_count]
     logging.info(f"banknote inserted: {amount}")
@@ -29,6 +35,12 @@ def transfer_banknotes(service: PiService, wallet: Wallet, pulse_count: int):
 
 
 def _transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockchain: BanknoteWithBlockchain):
+    """Передает указанную банкноту текущему клиенту
+
+    :param service: количество цифровых сигналов, пришедших на пин от купюроприемника
+    :param wallet: объект класса Wallet
+    """
+
     # Шаг 0
     service.send_to_client(data={"amount": banknote_with_blockchain.banknote.amount})
 

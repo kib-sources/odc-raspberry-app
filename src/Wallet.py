@@ -1,6 +1,4 @@
 from collections import Counter
-from itertools import groupby
-from operator import itemgetter
 from typing import List, Union, Optional
 from uuid import UUID
 
@@ -10,7 +8,6 @@ from core import crypto
 from core.Banknote import Banknote
 from core.BanknoteWithBlockchain import BanknoteWithBlockchain
 from core.Block import Block
-from core.banknotes_distribution import select_banknotes_from_bag
 from core.crypto import hash_items, sign_with_private_key
 from core.utils import current_epoch_time, gen_uuid
 
@@ -31,13 +28,25 @@ class Wallet:
         self._bag = dict()
 
     def refill(self, amount: int):
+        """Пополняет запас цифровых банкнот
+        :param amount: сумма для передачи
+        """
         banknotes: Optional[list] = self._issue_and_receive_banknotes(amount)
         self.banknotes += banknotes
 
-    def deposit_amount(self):
+    def _deposit_amount(self):
         return sum(it.banknote.amount for it in self.banknotes)
 
     def subscribe(self, uuid: Union[UUID, str], parent_uuid: Union[UUID, str], bnid):
+        """Создает объект класса PiService и активирует Bluetooth сервис
+        :param uuid: уникальный id блока
+        :param parent_uuid: уникальный id родительского блока
+        :param bnid: уникальный id банкноты
+        :return:
+            _subscribe_transaction_hash: хэш транзакции,
+            _subscribe_transaction_signature: цифровая подпись транзакции
+        """
+
         parent_uuid = str(parent_uuid)
         uuid = str(uuid)
         if parent_uuid not in self._bag:
@@ -161,6 +170,6 @@ if __name__ == "__main__":
     wallet_.refill(2000)
     wallet_.refill(2000)
 
-    print("$", wallet_.deposit_amount())
+    print("$", wallet_._deposit_amount())
     banknotes_in_wallet = [it.banknote.amount for idx, it in enumerate(wallet_.banknotes)]
     print("bucks in wallet", dict(Counter(banknotes_in_wallet)))
