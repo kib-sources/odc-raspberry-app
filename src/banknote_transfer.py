@@ -1,8 +1,7 @@
-import json
 import logging
 import time
+import cbor2 as cbor
 
-from PiService import PiService
 from Wallet import Wallet
 from core.Banknote import Banknote
 from core.BanknoteWithBlockchain import BanknoteWithBlockchain
@@ -10,15 +9,14 @@ from core.Block import Block
 from core.banknotes_distribution import select_banknotes_from_bag
 
 
-def transfer_banknotes(service: PiService, wallet: Wallet, pulse_count: int):
+def transfer_banknotes(service, wallet: Wallet, amount: int):
     """Передает указанную сумму текущему клиенту
 
-    :param pulse_count: объект класса PiService
+    :param amount: сумма для отправки
     :param wallet: объект класса Wallet
-    :param service: количество цифровых сигналов, пришедших на пин от купюроприемника
+    :param service: объект класса PiService или NfcService
     """
-    banknote_map = {2: 50, 3: 100, 4: 500, 5: 1000, 6: 5000, 7: 200, 8: 2000}
-    amount = banknote_map[pulse_count]
+
     logging.info(f"banknote inserted: {amount}")
 
     try:
@@ -27,6 +25,9 @@ def transfer_banknotes(service: PiService, wallet: Wallet, pulse_count: int):
         wallet.refill(max([amount, 2000]))
 
     sublist_indexes = select_banknotes_from_bag(wallet.banknotes, amount)
+
+    service.send_to_client(data={"amount": amount})
+
     for i in sublist_indexes:
         _transfer_banknote(service=service, wallet=wallet, banknote_with_blockchain=wallet.banknotes[i])
 
@@ -34,15 +35,12 @@ def transfer_banknotes(service: PiService, wallet: Wallet, pulse_count: int):
         del wallet.banknotes[i]
 
 
-def _transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockchain: BanknoteWithBlockchain):
+def _transfer_banknote(service, wallet: Wallet, banknote_with_blockchain: BanknoteWithBlockchain):
     """Передает указанную банкноту текущему клиенту
 
     :param service: количество цифровых сигналов, пришедших на пин от купюроприемника
     :param wallet: объект класса Wallet
     """
-
-    # Шаг 0
-    service.send_to_client(data={"amount": banknote_with_blockchain.banknote.amount})
 
     # Шаг 1
     protected_block = {
@@ -74,7 +72,7 @@ def _transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockch
 
     # Шаг 4
     buff = service.receive_from_client()
-    acceptance_blocks = json.loads(buff)["blocks"]
+    acceptance_blocks = cbor.loads(buff)["blocks"]
     block = Block.from_dict(acceptance_blocks["childBlock"])
 
     # Шаг 5
@@ -93,3 +91,5 @@ def _transfer_banknote(service: PiService, wallet: Wallet, banknote_with_blockch
         "childFull": block.to_dict()
     }
     service.send_to_client(data=payload)
+
+    print("Sent: " + str(banknote_with_blockchain.banknote.amount))

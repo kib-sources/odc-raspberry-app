@@ -5,7 +5,7 @@ from typing import List
 
 from core.BanknoteWithBlockchain import BanknoteWithBlockchain
 
-
+# TODO не для всех сумм корректно подбираются банкноты
 def select_banknotes_from_bag(bag: List[BanknoteWithBlockchain], amount: int):
     """Выбирает цифровые банкноты из хранилища для передачи клиенту
     :param bag : массив цифровых банкнот, хранимых в банкомате
@@ -36,7 +36,8 @@ def _split_banknotes_from_amount(amount: int):
     for i in range(len(possible_amounts) - 1):
         give_amounts += [possible_amounts[i]] * (possible_amounts[i + 1] // possible_amounts[i] - 1)
 
-    give_amounts += [2, 1000]
+    print(give_amounts)
+    give_amounts += [2, 50, 50, 1000]
     give_amounts = sorted(give_amounts)
 
     for i in range(len(give_amounts)):

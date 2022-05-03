@@ -32,7 +32,6 @@ class SmDriver:
         """
 
         while True:
-            sleep(0.4)
             yield
             if self.pulse_count == 0 or self.last_pulse_count != self.pulse_count:
                 self.last_pulse_count = self.pulse_count

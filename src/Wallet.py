@@ -11,7 +11,9 @@ from core.Block import Block
 from core.crypto import hash_items, sign_with_private_key
 from core.utils import current_epoch_time, gen_uuid
 
-server_url = "http://31.186.250.158"
+# server_url = "http://31.186.250.158"
+server_url = "http://192.168.0.101"
+# server_url = "http://192.168.132.87"
 
 
 class Wallet:
