@@ -11,13 +11,13 @@ RUSSIAN_RUBLE = 643
 class Block(DataClassJsonMixin):
     # BankNote id
     bnid: str
-    magic: str
+    magic: Optional[str]
     time: int
     uuid: str
     otok: str
-    transaction_hash: str
-    transaction_hash_signed: str = field(metadata=config(field_name="transactionHashSignature"))
+    transaction_hash: Optional[str]
+    transaction_hash_signed: Optional[str] = field(metadata=config(field_name="transactionHashSignature"))
 
-    otok_signature: str = None
-    transaction_signature: str = None
+    otok_signature: Optional[str] = None
+    transaction_signature: Optional[str] = None
     parent_uuid: Optional[str] = None

@@ -19,12 +19,14 @@ def transfer_banknotes(service, wallet: Wallet, amount: int):
 
     logging.info(f"banknote inserted: {amount}")
 
+    sublist_indexes = None
     try:
-        select_banknotes_from_bag(wallet.banknotes, amount)
+        sublist_indexes = select_banknotes_from_bag(wallet.banknotes, amount)
     except AssertionError:
         wallet.refill(max([amount, 2000]))
 
-    sublist_indexes = select_banknotes_from_bag(wallet.banknotes, amount)
+    if sublist_indexes is None:
+        sublist_indexes = select_banknotes_from_bag(wallet.banknotes, amount)
 
     service.send_to_client(data={"amount": amount})
 

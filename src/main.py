@@ -34,10 +34,15 @@ def curr_ms():
 
 def start_atm():
     def on_bucks_inserted(pulse_count):
+        # Купюроприёмник №1
         banknote_map = {2: 50, 3: 100, 4: 500, 5: 1000, 6: 5000, 7: 200, 8: 2000}
+        # Купюроприёмник №2
+        # banknote_map = {5: 50, 10: 100, 50: 500, 100: 1000, 3: 5000, 7: 200, 4: 2000}
         global inserted_sum
         print("Pulse count is: " + str(pulse_count))
-        inserted_sum += banknote_map[pulse_count]
+        if pulse_count not in banknote_map:
+            print('Pulse count is incorrect!')
+        inserted_sum += banknote_map.get(pulse_count, 100)
         print("Sum is: " + str(inserted_sum))
 
     def on_nfc_device_found(transfer_service: NfcService):

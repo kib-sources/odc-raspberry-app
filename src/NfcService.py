@@ -52,7 +52,10 @@ class NfcService:
         print("Searching for Android device")
         while True:
             yield
-            success = self.nfc.inListPassiveTarget()
+            try:
+                success = self.nfc.inListPassiveTarget()
+            except Exception:
+                continue
             if success:
                 print("Found something!")
                 success, response = self.nfc.inDataExchange(APDU_SELECT)
@@ -98,8 +101,8 @@ class NfcServiceFactory:
     def create_nfc_socket() -> NfcService:
         # Set the desired interface to True
         SPI = False
-        I2C = False
-        HSU = True
+        I2C = True
+        HSU = False
 
         if HSU:
             pn532_hsu = Pn532Hsu(Pn532Hsu.RPI_MINI_UART)
